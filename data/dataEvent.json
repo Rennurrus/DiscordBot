@@ -1,0 +1,21 @@
+{
+    "massageID": "837308919050797076",
+    "firstTeam": {
+        "name": "MaxTac",
+        "id": "",
+        "emoji": "🔵",
+        "roleID": "837302721837137950",
+        "teamMembers": {},
+        "score": "0"
+    },
+    "secondTeam": {
+        "name": "Maelstorm",
+        "id": "",
+        "emoji": "🔴",
+        "roleID": "837302797723631677",
+        "teamMembers": {
+           
+        },
+        "score": "0"
+    }
+}
