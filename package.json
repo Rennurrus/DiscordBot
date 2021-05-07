@@ -10,11 +10,11 @@
   "license": "ISC",
   "dependencies": {
     "better-sqlite3": "^7.1.5",
+    "body-parser": "*",
     "cors": "^2.8.5",
     "discord.js": "^12.5.3",
     "dotenv": "^9.0.0",
-    "node-gyp": "^8.0.0",
-    "express":"*",
-    "body-parser":"*"
+    "express": "^4.17.1",
+    "node-gyp": "^8.0.0"
   }
 }
