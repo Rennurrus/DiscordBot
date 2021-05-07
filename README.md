@@ -1,3 +1,4 @@
 # DiscordBot
-permalink
-/index.php
+---
+permalink: /index.php
+---
