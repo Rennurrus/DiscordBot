@@ -1,0 +1,3 @@
+# DiscordBot
+permalink
+/index.html
