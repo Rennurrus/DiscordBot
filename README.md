@@ -1,3 +1,3 @@
 # DiscordBot
 permalink
-/index.html
+/index.php
