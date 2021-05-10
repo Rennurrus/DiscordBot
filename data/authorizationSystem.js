@@ -63,7 +63,6 @@ function authorization(bot, req, res, sql, user)
         {
             user.roles.add('344586010060914699');
             user.roles.add('560808526621179934');
-            bot.channels.fetch('787718048097501246').then(channel => channel.send(`Пользователю ${req.body.nickname} добавили роли "Скаут" и "Адептус Астартес"!`));
             bot.channels.fetch('430733260704710676').then(channel => channel.send(regDateMsgPackeger(user, req)));
             res.send('OK');
             sql_response = sql.prepare("INSERT OR REPLACE INTO USERS (id, tag, name, gender, role, age, mic, reg_date) VALUES (@id, @tag, @name, @gender, @role, @age, @mic, @reg_date);")
@@ -72,14 +71,12 @@ function authorization(bot, req, res, sql, user)
         }
         else
         {
-            bot.channels.fetch('787718048097501246').then(channel => channel.send(`У пользователя ${req.body.nickname} уже есть роли!`));
             res.send('Err_0x02');
         }
     }
     else
     {
         res.send('Err_0x01');
-        bot.channels.fetch('787718048097501246').then(channel => channel.send(`Пользователя ${req.body.nickname} нет на сервере ${guildname}!`));
     }
 }
 

@@ -13,7 +13,7 @@ const voiceOrder 	= require("./data/voiceOrder.js");
 const reactions 	= require("./data/emojiReaction.js");
 const authorization = require("./data/authorizationSystem.js");
 const fs 			= require('fs');                   	// Подключаем родной модуль файловой системы node.js      
-let eventInfo 		= JSON.parse(fs.readFileSync('./data/dataEvent.json', 'utf-8'));
+let eventInfo 		= JSON.parse(fs.readFileSync('./public/dataEvent.json', 'utf-8'));
 
 let config 			= require('./data/config.json'); 	// Подключаем файл с параметрами и информацией
 let token  			= process.env.TOKEN;                // Токен бота
@@ -125,6 +125,7 @@ bot.on("voiceStateUpdate", async (oldVoiceState, newVoiceState) => {
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(express.static(__dirname + '/public'));
 
 app.post('/', async (req, res) => {																// Обработка POST запросов 
 	console.log("POST getted");

@@ -8,7 +8,7 @@ function addToEventTeam(bot, reaction, user, emoji)
 {
     const {guild}   = reaction.message;
     const member    = guild.members.cache.find(member => member.id === user.id);
-    const file      = JSON.parse(fs.readFileSync('./data/dataEvent.json', 'utf-8'))
+    const file      = JSON.parse(fs.readFileSync('./public/dataEvent.json', 'utf-8'))
     const firstRoleID	= file.firstTeam.roleID;
     const secondRoleID	= file.secondTeam.roleID; 
 
@@ -36,7 +36,7 @@ function addToEventTeam(bot, reaction, user, emoji)
             reaction.users.remove(user);
 
             file.firstTeam.teamMembers[member.user.id] = member.user.username;
-            fs.writeFileSync('./data/dataEvent.json', JSON.stringify(file, null, 4));
+            fs.writeFileSync('./public/dataEvent.json', JSON.stringify(file, null, 4));
         }
     }
     if (emoji === file.secondTeam.emoji)
@@ -63,7 +63,7 @@ function addToEventTeam(bot, reaction, user, emoji)
             reaction.users.remove(user);
 
             file.secondTeam.teamMembers[member.user.id] = member.user.username;
-            fs.writeFileSync('./data/dataEvent.json', JSON.stringify(file, null, 4));
+            fs.writeFileSync('./public/dataEvent.json', JSON.stringify(file, null, 4));
         }
     }
 }
