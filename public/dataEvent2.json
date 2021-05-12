@@ -13,8 +13,11 @@
         "id": "",
         "emoji": "🔴",
         "roleID": "838666768443899946",
-        "teamMembers": {
-        },
+        "teamMembers": {},
         "score": "0"
+    },
+    "deleteMode": {
+        "emoji": "🗑️",
+        "massageID": "841728813561806869"
     }
 }

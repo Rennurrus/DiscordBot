@@ -13,7 +13,7 @@ const voiceOrder 	= require("./data/voiceOrder.js");
 const reactions 	= require("./data/emojiReaction.js");
 const authorization = require("./data/authorizationSystem.js");
 const fs 			= require('fs');                   	// Подключаем родной модуль файловой системы node.js      
-let eventInfo 		= JSON.parse(fs.readFileSync('./public/dataEvent.json', 'utf-8'));
+let eventInfo 		= JSON.parse(fs.readFileSync('./public/dataEvent2.json', 'utf-8'));
 
 let config 			= require('./data/config.json'); 	// Подключаем файл с параметрами и информацией
 let token  			= process.env.TOKEN;                // Токен бота
@@ -21,6 +21,7 @@ let prefix 			= config.prefix;                 	// Префикс команд
 let masterID 		= config.masterID;					// ID администратора бота
 let nID  			= config.nikitaID;
 let adminArr 		= [masterID, nID]; 
+let guildID 		= config.guildID;
 
 const { Client, Intents } = require("discord.js");
 const intents = new Intents([
@@ -73,17 +74,35 @@ function sendToAdmin(adminArrID, msg)
 	});
 }
 
+function getApp(guildID)
+{
+	const app = bot.api.applications(bot.user.id);
+	if (guildID)
+	{
+		app.guilds(guildID);
+	}
+	return app;
+}
 
 bot.on("ready", function(){																// При запуске бота 
 	console.log(bot.user.username + " is connected!");
 	//console.log(nID);
 	//console.log(sql.prepare("SELECT * FROM USERS").all());
 	//console.log()
-	/*bot.channels.fetch("787718048097501246").then(channel => channel.send('Тестовое сообщение').then(message => 
+	bot.channels.fetch("838667726717321226").then(channel => channel.send('Удалить меня из команды').then(message => 
 		{
-			message.react("🔵"); 
-			message.react("🔴");
-	}));*/
+			message.react("🗑️"); 
+			//message.react("🔴");
+	}));
+
+	const slashCommands = await getApp(guildID).commands.get(); 
+	console.log(slashCommands);
+	await getApp(guildID).commands.post({
+		data: {
+			name: "test slash command",
+			description: "Just a test slash command"
+		}
+	});
 });
 
 bot.on("message", (msg) => {															// При получении сообщения
@@ -114,6 +133,11 @@ bot.on("messageReactionAdd", async (reaction,user) => {
 	if (reaction.message.id === eventInfo.massageID)
 	{
 		await reactions.reaction_list.addUserToTeam.out(bot, reaction, user, reaction._emoji.name);
+	}
+
+	if (reaction.message.id === eventInfo.deleteMode.massageID)
+	{
+		await reactions.reaction_list.deleteUserFromTeam.out(bot, reaction, user, reaction._emoji.name);
 	}
 });
 
