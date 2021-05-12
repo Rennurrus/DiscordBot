@@ -105,7 +105,7 @@ bot.on("ready", async function(){																// При запуске бот
 
 	});
 
-	await bot.api.applications(bot.user.id).guilds(guildID).commands("842102899559628890").delete();
+	/*await bot.api.applications(bot.user.id).guilds(guildID).commands("842102899559628890").delete();*/
 
 	await bot.api.applications(bot.user.id).guilds(guildID).commands.post({
 		data: {
