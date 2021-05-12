@@ -84,24 +84,35 @@ function getApp(guildID)
 	return app;
 }
 
-bot.on("ready", function(){																// При запуске бота 
+bot.on("ready", async function(){																// При запуске бота 
 	console.log(bot.user.username + " is connected!");
 	//console.log(nID);
 	//console.log(sql.prepare("SELECT * FROM USERS").all());
 	//console.log()
-	bot.channels.fetch("838667726717321226").then(channel => channel.send('Удалить меня из команды').then(message => 
+	/*bot.channels.fetch("838667726717321226").then(channel => channel.send('Удалить меня из команды').then(message => 
 		{
 			message.react("🗑️"); 
 			//message.react("🔴");
-	}));
+	}));*/
 
-	const slashCommands = await getApp(guildID).commands.get(); 
+	const slashCommands = await bot.api.applications(bot.user.id).guilds(guildID).commands.get(); 
 	console.log(slashCommands);
-	await getApp(guildID).commands.post({
+	await bot.api.applications(bot.user.id).guilds(guildID).commands.post({
 		data: {
-			name: "test slash command",
-			description: "Just a test slash command"
+			name: "help",
+			description: "Show all bot's commands"
 		}
+
+	});
+
+	await bot.api.applications(bot.user.id).guilds(guildID).commands("842102899559628890").delete();
+
+	await bot.api.applications(bot.user.id).guilds(guildID).commands.post({
+		data: {
+			name: "help",
+			description: "Show all bot's commands"
+		}
+
 	});
 });
 
