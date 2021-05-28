@@ -86,6 +86,7 @@ function getApp(guildID)
 
 bot.on("ready", async function(){																// При запуске бота 
 	console.log(bot.user.username + " is connected!");
+	console.log(process.env);
 	//console.log(nID);
 	//console.log(sql.prepare("SELECT * FROM USERS").all());
 	//console.log()
@@ -186,5 +187,5 @@ app.get('/', async (req, res) =>{
 	res.status(200).send("OK");
 });
 
-app.listen(5000);
+app.listen(process.env.PORT);
 bot.login(process.env.TOKEN);
