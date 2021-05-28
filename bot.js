@@ -186,5 +186,5 @@ app.get('/', async (req, res) =>{
 	res.status(200).send("OK");
 });
 
-app.listen(5000);
+app.listen(80);
 bot.login(process.env.TOKEN);
