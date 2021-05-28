@@ -153,7 +153,11 @@ bot.on("messageReactionAdd", async (reaction,user) => {
 });
 
 bot.on("voiceStateUpdate", async (oldVoiceState, newVoiceState) => {
-	voiceOrder.run(bot, oldVoiceState, newVoiceState);
+	if (oldVoiceState.channel !== undefined)
+		var guildID = oldVoiceState.guild.id;
+	else if (newVoiceState.channel !== undefined)
+		var guildID = newVoiceState.guild.id;
+	voiceOrder.run(bot, oldVoiceState, newVoiceState, String (guildID));
 });
 
 
