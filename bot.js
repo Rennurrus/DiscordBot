@@ -92,7 +92,6 @@ bot.on("ready", async function(){																// При запуске бот
 	/*bot.channels.fetch("838667726717321226").then(channel => channel.send('Удалить меня из команды').then(message => 
 		{
 			message.react("🗑️"); 
-			//message.react("🔴");
 	}));*/
 
 	const slashCommands = await bot.api.applications(bot.user.id).guilds(guildID).commands.get(); 
