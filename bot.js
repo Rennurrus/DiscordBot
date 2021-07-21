@@ -4,6 +4,7 @@ const app 			= express();						// Запускаем express
 
 const cors 			= require('cors');					// Библиотека CORS
 const bodyParser 	= require('body-parser');			// Парсерс web-запросов
+const Discord   	= require('discord.js');    // Подключаем библиотеку discord.js
 
 const SQLite 		= require("better-sqlite3");		// Библиотека БД SQLlite3
 const sql 			= new SQLite('./db/SonsOfWeb.db');	// Подключаем БД 
@@ -23,7 +24,8 @@ let nID  			= config.nikitaID;
 let adminArr 		= [masterID, nID]; 
 let guildID 		= config.guildID;
 
-const { Client, Intents } = require("discord.js");
+const { Client, Intents, DiscordAPIError } = require("discord.js");
+const { response } = require('express');
 const intents = new Intents([
     Intents.NON_PRIVILEGED, 							// include all non-privileged intents, would be better to specify which ones you actually need
     "GUILD_MEMBERS", 									// lets you request guild members (i.e. fixes the issue)
@@ -33,6 +35,47 @@ const bot = new Client({ ws: { intents }, partials: ['MESSAGE', 'CHANNEL', 'REAC
 function sendInConsole(data)
 {
 	console.log(`[${new Date().toLocaleString('ru', { year:'numeric',month:'numeric',day: 'numeric',hour:'numeric',minute:'numeric'})}] : ${data}`);
+}
+
+async function createAPIMessage(interaction, content, EPHEMERAL) 
+{
+	let flags = { flags: null }
+	if (EPHEMERAL)
+	{
+		flags = { flags: 64 }
+	}
+	const { data, files } = await Discord.APIMessage.create( bot.channels.resolve(interaction.channel_id), content)
+	.resolveData()
+	.resolveFiles();
+
+	return { ...data,files,...flags };
+}
+
+const reply = async(interaction, response, EPHEMERAL) =>
+{
+	let data;
+	if (EPHEMERAL)
+		data = {
+				content: response,
+				flags: 64,
+		}
+	else
+		data = {
+			content: response,
+		}
+
+	if (typeof response === 'object')
+	{
+		data = await createAPIMessage(interaction, response, EPHEMERAL);
+	}
+
+
+	await bot.api.interactions(interaction.id, interaction.token).callback.post({
+			data:{
+				type: 4,
+				data,
+			}
+	});
 }
 
 function sendToAdmin(adminArrID, msg)
@@ -86,22 +129,14 @@ function getApp(guildID)
 
 bot.on("ready", async function(){																// При запуске бота 
 	console.log(bot.user.username + " is connected!");
-	console.log(process.env);
-	//console.log(nID);
-	//console.log(sql.prepare("SELECT * FROM USERS").all());
-	//console.log()
-	/*bot.channels.fetch("838667726717321226").then(channel => channel.send('Удалить меня из команды').then(message => 
-		{
-			message.react("🗑️"); 
-			//message.react("🔴");
-	}));*/
+	//console.log(process.env);
 
 	const slashCommands = await bot.api.applications(bot.user.id).guilds(guildID).commands.get(); 
-	console.log(slashCommands);
+	//console.log(slashCommands);
 	await bot.api.applications(bot.user.id).guilds(guildID).commands.post({
 		data: {
 			name: "help",
-			description: "Show all bot's commands"
+			description: "Show all bot's commands",
 		}
 
 	});
@@ -110,10 +145,44 @@ bot.on("ready", async function(){																// При запуске бот
 
 	await bot.api.applications(bot.user.id).guilds(guildID).commands.post({
 		data: {
-			name: "help",
-			description: "Show all bot's commands"
+			name: "say",
+			description: "Say on behalf of a bot",
+			options: [
+				{
+					name: 'text',
+					description: 'Message text',
+					type: 3,
+					required: true,
+				}
+			]
 		}
 
+	});
+
+	bot.ws.on('INTERACTION_CREATE', async interaction => {
+		const command 	= interaction.data.name.toLowerCase();
+		const args 		= interaction.data.options;
+
+		
+		
+		//console.log(interaction.member.permissions & 0x0000000008); 
+
+		if (command === 'help')
+		{
+			reply(interaction, commands.getHelpList(bot,interaction.member), true);
+		}
+		if (command === 'say')
+		{
+			if (interaction.member.permissions & 0x0000000008)	// 0x0000000008 - это 4 бит справа, который отвечает за права Администратора 
+			{													// https://discord.com/developers/docs/topics/permissions
+				reply(interaction, 'Message sended! Only you see this message' , true);
+				await bot.channels.fetch(interaction.channel_id).then(channel => channel.send(args[0].value));
+			}
+			else
+			{
+				reply(interaction, 'У вас нет прав на эту команду!' , true);
+			}
+		}
 	});
 });
 
@@ -128,7 +197,16 @@ bot.on("message", (msg) => {															// При получении сооб
     	var commande = msg.content.trim()+" ";
 	    var comm_name = commande.slice(0, commande.indexOf(" "));
         var messArr = commande.split(" ");
-        
+
+
+		for(comm_count in commands.adminCommands){
+			var comm2 = prefix + commands.adminCommands[comm_count].name;
+			if(comm2 == comm_name)
+			{
+				commands.adminCommands[comm_count].out(bot, msg, messArr);
+			}
+		}
+
 	    for(comm_count in commands.commands){
 	    	var comm2 = prefix + commands.commands[comm_count].name;
 	    	if(comm2 == comm_name){

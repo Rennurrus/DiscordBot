@@ -9,7 +9,8 @@ function congratulate(bot, message, args)
     bot.guilds.fetch('344221549697564672').then(guild => {
 		guild.members.fetch().then( fetchedMembers =>
 			{
-				const user = fetchedMembers.find(member => member.user.username + "#" + member.user.discriminator === args[1]);
+				const user = fetchedMembers.find(member => member.user.tag === args[1]);
+                console.log(fetchedMembers);
 				if (user)
 				{
 
@@ -238,6 +239,8 @@ function reg(bot, message, args)
 function test(bot, message, args) 
 {
     console.log(message.guild);
+    console.log(args[1].length);
+    console.log(args[1].substr(3, args[1].length - 4));
 }
 
 async function test2(bot, message, args)
@@ -289,27 +292,43 @@ function sendMechanicusRage(bot, massege, args)
 	massege.channel.send(`${emoji}`);
 }
 
-function getHelpList()
+function getHelpList(bot, member)
 {
-    let string = ""
-    for (let commande in commands_list)
+    const embed = new Discord.MessageEmbed()
+    .setAuthor(bot.user.username,bot.user.avatarURL())
+    .setTitle('Commissar-General\'s commands list:')
+    .setColor(0xffbb00)
+    .addField('**Slash commands:**','=========================================================',false)
+    .addField('\`/help\`','Показать список команд',true)
+    .addField('\`/say\` \`text:\`','Написать от лица бота **[Администрация]**',true)
+    .addField('**Common commands:**','=========================================================',false);
+    for (let command in commandsList)
     {
-        let item = commands_list[commande];
-        string += item.name + "\t->  \"" +  item.about + "\"\n";
+        let item = commandsList[command];
+        embed.addField(`\`//${item.name}\``,`${item.about}`, true)
     }
-    return string;
+    if (member.permissions & 0x0000000008)  // 0x0000000008 - это 4 бит справа, который отвечает за права Администратора 
+    {									    // https://discord.com/developers/docs/topics/permissions
+        embed.addField('**Admins commands:**','=========================================================',false)
+        for (let command in adminCommandsList)
+        {
+            let item = adminCommandsList[command];
+            embed.addField(`\`//${item.name}\``,`${item.about}`, true)
+        }
+    }
+    embed.setFooter("\u3000".repeat(10));
+    return embed;
 }
 
 function help(bot, message, args)
 {
-    message.channel.send( message.author.toString() + "\n```\n" + bot.user.username + "'s commands list:\n\n" + getHelpList() + "```")
+    message.channel.send( /*message.author.toString() + "\n```\n" + bot.user.username + "'s commands list:\n\n" + */getHelpList(bot, message.member)/* + "```"*/);
 }
 
 // Список команд //
 
-var commands_list = 
+var commandsList = 
 [
-
     {
         name: "test",
         out: test,
@@ -326,24 +345,9 @@ var commands_list =
         about: "Это команда"
     },
     {
-        name: "say",
-        out: say,
-        about: "Сказать ботом фразу (Администрация)"
-    },
-    {
-        name: "saydm",
-        out: saydm,
-        about: "Сказать ботом фразу в лс пользователю (Администрация)"
-    },
-    {
-        name: "saydmID",
-        out: saydmID,
-        about: "Сказать ботом фразу в лс пользователю по ID (Администрация)"
-    },
-    {
         name: "congratulate",
         out: congratulate,
-        about: "Написать поздравление человеку <username#discriminator>"
+        about: "Написать поздравление человеку <username#tag>"
     },
     {
         name: "congratulateID",
@@ -355,16 +359,36 @@ var commands_list =
         out: sendMechanicusRage,
         about: "Отправить эмодзи Механикуса"
     },
-    {
+    /*{
         name: 'reg',
         out: reg,
         about: "[Не работает] Регистрация пользователя (ID, имя, возраст, пол <Муж or Жен>, микрофон <1 or 0>)"
-    }
+    }*/
 
 ];
 
-// Name - название команды, на которую будет реагировать бот
-// Out - название функции с командой
-// About - описание команды 
+var adminCommandsList = [
+    {
+        name: "say",
+        out: say,
+        about: "Сказать ботом фразу **[Администрация]**"
+    },
+    {
+        name: "saydm",
+        out: saydm,
+        about: "Сказать ботом фразу в     ЛС пользователю **[Администрация]**"
+    },
+    {
+        name: "saydmID",
+        out: saydmID,
+        about: "Сказать ботом фразу в   ЛС пользователю по ID **[Администрация]**"
+    },
+]
 
-module.exports.commands = commands_list;
+// Name     - название команды, на которую будет реагировать бот
+// Out      - название функции с командой
+// About    - описание команды 
+
+module.exports.getHelpList      = getHelpList;
+module.exports.commands         = commandsList;
+module.exports.adminCommands    = adminCommandsList;

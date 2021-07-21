@@ -16,7 +16,7 @@ function addToEventTeam(bot, reaction, user, emoji)
     {	
         if (member.roles.cache.find(role => role.id === secondRoleID) || file.secondTeam.teamMembers[member.user.id] != null)
         {
-            user.send('🟥 Вы уже в Красной команде! 🟥');
+            user.send(`🟥 Вы уже в Красной команде! 🟥`);
             if (!member.roles.cache.find(role => role.id === secondRoleID))
                 member.roles.add(secondRoleID);
             reaction.users.remove(user);
@@ -31,7 +31,7 @@ function addToEventTeam(bot, reaction, user, emoji)
         }
         else
         {
-            user.send(`Добро пожаловать в 🟦 ${file.secondTeam.name} 🟦`);
+            user.send(`Добро пожаловать в 🟦 ${file.firstTeam.name} 🟦`);
             member.roles.add(firstRoleID);
             reaction.users.remove(user);
 

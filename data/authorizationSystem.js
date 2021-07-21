@@ -13,13 +13,13 @@ function regDateMsgPackeger(user , req)
             timestamp: new Date(),
             description: 
             `\`\`\`
-                Никнейм:            ${req.body.nickname}\n
-                Имя:                ${req.body.name}\n
-                Возраст:            ${req.body.age}\n
-                Пол:                ${req.body.gender}\n
-                Наличие микрофона:  ${req.body.microphone}\n
-                ID:                 ${user.id}\n
-                Дата регистрации:   ${new Date().toLocaleString('ru', 
+Никнейм:            ${req.body.nickname}\n
+Имя:                ${req.body.name}\n
+Возраст:            ${req.body.age}\n
+Пол:                ${req.body.gender}\n
+Наличие микрофона:  ${req.body.microphone}\n
+ID:                 ${user.id}\n
+Дата регистрации:   ${new Date().toLocaleString('ru', 
                     {
                         year: 	'numeric',
                         month: 	'long',
